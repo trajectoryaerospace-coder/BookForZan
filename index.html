@@ -1,467 +1,1076 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>For Zanieke</title>
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
+<title>For Zanieke ♡</title>
 
 <style>
+
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    font-family: Georgia, "Times New Roman", serif;
 }
-
-/* =========================
-   BACKGROUND
-========================= */
 
 body {
     background:
-        radial-gradient(circle at 20% 30%, rgba(255,255,255,.45), transparent 25%),
-        radial-gradient(circle at 80% 70%, rgba(255,255,255,.35), transparent 25%),
-        linear-gradient(135deg, #f7b6c8, #f8cbd7, #ed9fb9);
-    position: relative;
+        radial-gradient(
+            ellipse at 50% 40%,
+            rgba(255,255,255,.65),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #f4b1c3 0%,
+            #f9ccd8 45%,
+            #ed9fb8 100%
+        );
+
+    font-family: Georgia, "Times New Roman", serif;
 }
 
-/* Animated silky waves */
+
+/* =========================================================
+   PINK LIQUID / SILK BACKGROUND
+========================================================= */
+
+.background {
+    position: fixed;
+    inset: -20%;
+    overflow: hidden;
+}
 
 .wave {
     position: absolute;
-    width: 180%;
-    height: 45%;
-    left: -40%;
+
+    width: 140%;
+    height: 35%;
+
+    left: -20%;
+
     border-radius: 50%;
-    border: 2px solid rgba(255,255,255,.25);
-    filter: blur(1px);
-    animation: waveMove 9s ease-in-out infinite alternate;
+
+    border-top: 2px solid rgba(255,255,255,.48);
+    border-bottom: 1px solid rgba(255,255,255,.18);
+
+    filter: blur(2px);
+
+    animation:
+        waveFloat 12s ease-in-out infinite alternate;
 }
 
 .wave:nth-child(1) {
-    top: 5%;
+    top: 2%;
     transform: rotate(-7deg);
 }
 
 .wave:nth-child(2) {
-    top: 30%;
+    top: 27%;
+    transform: rotate(6deg);
     animation-delay: -3s;
-    transform: rotate(8deg);
 }
 
 .wave:nth-child(3) {
-    top: 60%;
-    animation-delay: -6s;
+    top: 55%;
     transform: rotate(-5deg);
+    animation-delay: -6s;
 }
 
-@keyframes waveMove {
+.wave:nth-child(4) {
+    top: 78%;
+    transform: rotate(7deg);
+    animation-delay: -9s;
+}
+
+@keyframes waveFloat {
+
     from {
-        transform: translateX(-4%) rotate(-6deg) scaleY(.9);
+        transform:
+            translateX(-4%)
+            rotate(-6deg)
+            scaleY(.92);
     }
+
     to {
-        transform: translateX(4%) rotate(6deg) scaleY(1.1);
+        transform:
+            translateX(4%)
+            rotate(6deg)
+            scaleY(1.08);
     }
 }
 
-/* Soft floating petals */
+
+/* =========================================================
+   LIGHT SHIMMER
+========================================================= */
+
+.shimmer {
+    position: absolute;
+
+    width: 180%;
+    height: 20%;
+
+    left: -40%;
+    top: 40%;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.3),
+            transparent
+        );
+
+    transform: rotate(-8deg);
+
+    filter: blur(15px);
+
+    animation: shimmerMove 8s ease-in-out infinite;
+}
+
+@keyframes shimmerMove {
+
+    0% {
+        transform:
+            translateX(-20%)
+            rotate(-8deg);
+    }
+
+    100% {
+        transform:
+            translateX(20%)
+            rotate(-8deg);
+    }
+}
+
+
+/* =========================================================
+   PETALS
+========================================================= */
 
 .petal {
     position: absolute;
-    width: 24px;
-    height: 13px;
-    background: rgba(255, 235, 242, .65);
-    border-radius: 100% 0 100% 0;
-    animation: floatPetal 10s linear infinite;
-}
 
-.p1 { left: 8%; top: 20%; animation-delay: -2s; }
-.p2 { left: 75%; top: 15%; animation-delay: -6s; }
-.p3 { left: 87%; top: 72%; animation-delay: -4s; }
-.p4 { left: 17%; top: 76%; animation-delay: -8s; }
+    width: 28px;
+    height: 16px;
 
-@keyframes floatPetal {
-    0% {
-        transform: translateY(20px) rotate(0deg);
-        opacity: .3;
-    }
-    50% {
-        opacity: .8;
-    }
-    100% {
-        transform: translateY(-80px) rotate(180deg);
-        opacity: 0;
-    }
-}
-
-/* =========================
-   BOOK AREA
-========================= */
-
-.scene {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    perspective: 1800px;
-}
-
-/*
-The book starts slightly to the left.
-When opened, the whole book moves left so
-the TWO pages are centered.
-*/
-
-.book {
-    width: min(34vw, 310px);
-    aspect-ratio: .68;
-    position: relative;
-    transform-style: preserve-3d;
-    transition:
-        transform 1.25s cubic-bezier(.2,.8,.2,1);
-    cursor: pointer;
-}
-
-/* =========================
-   CLOSED BOOK
-========================= */
-
-.cover {
-    position: absolute;
-    inset: 0;
-    border-radius: 7px 12px 12px 7px;
+    border-radius:
+        100% 0
+        100% 0;
 
     background:
         linear-gradient(
             135deg,
-            #f9d1dc,
-            #efabbf 50%,
-            #e99eb5
+            rgba(255,244,248,.85),
+            rgba(239,166,189,.55)
         );
 
-    border: 3px solid #d99aaa;
-
     box-shadow:
-        10px 15px 30px rgba(100,40,65,.28),
-        inset 0 0 0 3px rgba(255,255,255,.3),
-        inset 0 0 25px rgba(150,50,80,.15);
+        0 3px 8px rgba(130,60,80,.08);
 
-    transform-origin: left center;
-    transform-style: preserve-3d;
-    transition:
-        transform 1.35s cubic-bezier(.2,.8,.2,1);
-    z-index: 5;
+    animation: petalFloat 9s linear infinite;
 }
 
-/* Gold inner border */
-
-.cover::before {
-    content: "";
-    position: absolute;
-    inset: 12px;
-    border: 1px solid rgba(160,100,100,.6);
-    border-radius: 4px;
-    pointer-events: none;
+.petal:nth-child(1) {
+    left: 8%;
+    top: 22%;
+    animation-delay: -2s;
 }
 
-.cover::after {
-    content: "✦";
-    position: absolute;
-    top: 13%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 22px;
-    color: #bd806f;
+.petal:nth-child(2) {
+    left: 75%;
+    top: 17%;
+    animation-delay: -5s;
 }
 
-/* Spine */
-
-.spine {
-    position: absolute;
-    left: -10px;
-    top: -3px;
-    width: 16px;
-    height: calc(100% + 6px);
-    border-radius: 8px 0 0 8px;
-
-    background: linear-gradient(
-        90deg,
-        #c98298,
-        #f2c1cc,
-        #c98298
-    );
-
-    border: 2px solid #c17d92;
+.petal:nth-child(3) {
+    left: 88%;
+    top: 73%;
+    animation-delay: -1s;
 }
 
-/* =========================
-   COVER DECORATION
-========================= */
-
-.decor {
-    position: absolute;
-    inset: 28px;
-    border: 1px solid rgba(170,100,100,.55);
-    pointer-events: none;
+.petal:nth-child(4) {
+    left: 15%;
+    top: 78%;
+    animation-delay: -7s;
 }
 
-.corner {
-    position: absolute;
-    color: #bd806f;
-    font-size: 27px;
+@keyframes petalFloat {
+
+    0% {
+        opacity: .1;
+        transform:
+            translateY(30px)
+            rotate(0deg);
+    }
+
+    40% {
+        opacity: .8;
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translateY(-100px)
+            translateX(30px)
+            rotate(180deg);
+    }
 }
 
-.c1 { top: 18px; left: 18px; }
-.c2 { top: 18px; right: 18px; transform: scaleX(-1); }
-.c3 { bottom: 18px; left: 18px; transform: scaleY(-1); }
-.c4 { bottom: 18px; right: 18px; transform: scale(-1); }
 
-.flower {
-    position: absolute;
-    color: #d7869c;
-    font-size: 30px;
-}
+/* =========================================================
+   SCENE
+========================================================= */
 
-.f1 { top: 18px; left: 25%; }
-.f2 { top: 18px; right: 25%; }
-.f3 { bottom: 18px; left: 25%; }
-.f4 { bottom: 18px; right: 25%; }
+.scene {
 
-.bow {
-    position: absolute;
-    top: 13%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 31px;
-    color: #bd806f;
-}
-
-/* =========================
-   COVER TEXT
-========================= */
-
-.cover-content {
     position: absolute;
     inset: 0;
+
     display: flex;
-    flex-direction: column;
-    justify-content: center;
+
     align-items: center;
-    text-align: center;
-    padding: 35px;
-    color: #a85f73;
+    justify-content: center;
+
+    perspective: 2200px;
 }
 
-.cover-content h1 {
-    font-size: clamp(23px, 4vw, 38px);
-    line-height: 1.2;
-    font-weight: normal;
-    font-style: italic;
-    text-shadow: 0 1px rgba(255,255,255,.5);
+
+/* =========================================================
+   BOOK
+
+   70% OF THE ORIGINAL SIZE
+========================================================= */
+
+.book {
+
+    /*
+       Previous:
+       width: min(34vw, 310px)
+
+       Now approximately 70%.
+    */
+
+    width: min(24vw, 220px);
+
+    aspect-ratio: .70;
+
+    position: relative;
+
+    transform-style: preserve-3d;
+
+    /*
+       Closed book starts centered.
+    */
+
+    transform:
+        translateX(0)
+        translateZ(0);
+
+    transition:
+        transform 1.4s
+        cubic-bezier(.18,.82,.2,1);
+
+    cursor: pointer;
 }
 
-.cover-content .heart {
-    margin: 15px 0;
-    font-size: 25px;
-}
 
-.cover-content .open-text {
-    font-size: clamp(12px, 2vw, 17px);
-    opacity: .8;
-    letter-spacing: 1px;
-}
+/* =========================================================
+   BOOK SHADOW
+========================================================= */
 
-/* =========================
-   OPEN BOOK
-========================= */
+.book-shadow {
 
-.pages {
     position: absolute;
+
+    width: 110%;
+    height: 13%;
+
+    left: -5%;
+    bottom: -8%;
+
+    border-radius: 50%;
+
+    background:
+        rgba(80,35,50,.25);
+
+    filter: blur(18px);
+
+    transform:
+        translateZ(-30px);
+
+    transition:
+        transform 1.4s ease,
+        opacity 1s ease;
+}
+
+
+/* =========================================================
+   PAGE BLOCK
+
+   IMPORTANT:
+   This exists UNDER the cover BEFORE opening.
+========================================================= */
+
+.page-block {
+
+    position: absolute;
+
+    inset: 2px 0 2px 5px;
+
+    border-radius:
+        3px
+        9px
+        9px
+        3px;
+
+    background:
+
+        repeating-linear-gradient(
+            to bottom,
+            #fffaf0 0px,
+            #fffaf0 2px,
+            #e7dccd 3px,
+            #fffaf0 4px
+        );
+
+    box-shadow:
+
+        5px 6px 12px
+        rgba(80,40,50,.18),
+
+        inset -5px 0 8px
+        rgba(130,90,70,.08);
+
+    transform:
+        translateZ(-5px);
+
+    z-index: 1;
+}
+
+
+/* =========================================================
+   PAGE EDGES
+========================================================= */
+
+.page-edge {
+
+    position: absolute;
+
+    right: -5px;
+
+    width: 5px;
+
+    height: 96%;
+
+    top: 2%;
+
+    background:
+
+        repeating-linear-gradient(
+            to bottom,
+            #f8f0e4 0px,
+            #f8f0e4 2px,
+            #d8cbbb 3px,
+            #f8f0e4 4px
+        );
+
+    border-radius: 0 5px 5px 0;
+}
+
+
+/* =========================================================
+   ACTUAL OPEN BOOK
+
+   TWO REAL PAGE HALVES
+========================================================= */
+
+.open-book {
+
+    position: absolute;
+
     width: 200%;
     height: 100%;
+
     left: 0;
     top: 0;
 
     display: flex;
 
-    opacity: 0;
+    transform-style: preserve-3d;
+
+    z-index: 2;
+
     pointer-events: none;
-
-    transform: translateX(0) scale(.96);
-
-    transition:
-        opacity .5s ease .75s,
-        transform 1.25s cubic-bezier(.2,.8,.2,1);
 }
 
-/* Individual page */
 
-.page {
+/* =========================================================
+   INDIVIDUAL OPEN PAGE
+========================================================= */
+
+.open-page {
+
+    position: relative;
+
     width: 50%;
     height: 100%;
 
     background:
+
         linear-gradient(
             90deg,
-            #f6eee3,
-            #fffaf1,
-            #f3e8da
+            #e7d9c9 0%,
+            #faf4e9 5%,
+            #fffaf0 50%,
+            #f5ecdf 100%
         );
 
-    border: 1px solid #d8c6b4;
+    border: 1px solid #d6c5b4;
 
     box-shadow:
-        inset 0 0 25px rgba(100,70,40,.08);
+        inset 0 0 25px
+        rgba(100,65,45,.08);
+
+    overflow: hidden;
 }
 
-/* Left page */
 
-.page.left {
-    border-radius: 8px 0 0 8px;
-    transform-origin: right center;
+/* left page */
+
+.open-page.left {
+
+    border-radius:
+        9px 0 0 9px;
+
+    transform-origin:
+        right center;
 }
 
-/* Right page */
 
-.page.right {
-    border-radius: 0 8px 8px 0;
-    transform-origin: left center;
+/* right page */
+
+.open-page.right {
+
+    border-radius:
+        0 9px 9px 0;
+
+    transform-origin:
+        left center;
 }
 
-/* Center crease */
 
-.page.left::after {
+/* =========================================================
+   CENTER CREASE
+========================================================= */
+
+.open-page.left::after {
+
     content: "";
+
     position: absolute;
-    right: 0;
+
+    right: -2px;
     top: 2%;
-    height: 96%;
+
     width: 5px;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(100,70,50,.16),
-        transparent
-    );
+    height: 96%;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(80,55,45,.18),
+            transparent
+        );
+
+    filter: blur(.5px);
 }
 
-/* =========================
-   OPEN STATE
-========================= */
 
-.book.open {
-    /*
-    Move the book left by half its width,
-    because the open book is twice as wide.
-    */
-    transform: translateX(calc(-50% + 8px));
+/* =========================================================
+   COVER
+
+   This is the important bit.
+   It physically rotates around the spine.
+========================================================= */
+
+.cover {
+
+    position: absolute;
+
+    inset: 0;
+
+    z-index: 10;
+
+    transform-style: preserve-3d;
+
+    transform-origin:
+        left center;
+
+    border-radius:
+        5px
+        10px
+        10px
+        5px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #f8d4de 0%,
+            #efb0c2 48%,
+            #e89fb6 100%
+        );
+
+    border:
+        2px solid #d99aaa;
+
+    box-shadow:
+
+        8px 12px 24px
+        rgba(90,40,60,.25),
+
+        inset 0 0 0 3px
+        rgba(255,255,255,.27),
+
+        inset 0 0 25px
+        rgba(150,60,80,.12);
+
+    transition:
+
+        transform
+        1.55s
+        cubic-bezier(.16,.85,.18,1);
 }
 
-.book.open .cover {
-    transform: rotateY(-180deg);
+
+/* =========================================================
+   COVER INNER BORDER
+========================================================= */
+
+.cover-inner {
+
+    position: absolute;
+
+    inset: 9px;
+
+    border:
+        1px solid
+        rgba(170,100,110,.55);
+
+    border-radius: 4px;
 }
 
-.book.open .pages {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateX(0) scale(1);
+
+/* =========================================================
+   COVER CORNERS
+========================================================= */
+
+.corner {
+
+    position: absolute;
+
+    color: #b97883;
+
+    font-size: 24px;
+
+    opacity: .9;
 }
 
-/* Make cover disappear behind pages */
-
-.book.open .cover {
-    z-index: 0;
+.corner.tl {
+    left: 16px;
+    top: 13px;
 }
 
-/* =========================
-   PAGE CONTENT
-========================= */
+.corner.tr {
+    right: 16px;
+    top: 13px;
+    transform: scaleX(-1);
+}
 
-.page-content {
-    width: 100%;
-    height: 100%;
-    padding: 9%;
-    color: #80666a;
-    text-align: center;
+.corner.bl {
+    left: 16px;
+    bottom: 13px;
+    transform: scaleY(-1);
+}
+
+.corner.br {
+    right: 16px;
+    bottom: 13px;
+    transform: scale(-1);
+}
+
+
+/* =========================================================
+   FLOWERS
+========================================================= */
+
+.flower {
+
+    position: absolute;
+
+    color: #d8879c;
+
+    font-size: 25px;
+
+    text-shadow:
+        0 1px rgba(255,255,255,.4);
+}
+
+.flower.f1 {
+    top: 14px;
+    left: 30px;
+}
+
+.flower.f2 {
+    top: 14px;
+    right: 30px;
+}
+
+.flower.f3 {
+    bottom: 14px;
+    left: 30px;
+}
+
+.flower.f4 {
+    bottom: 14px;
+    right: 30px;
+}
+
+
+/* =========================================================
+   BOW
+========================================================= */
+
+.bow {
+
+    position: absolute;
+
+    top: 13%;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    color: #b97883;
+
+    font-size: 26px;
+}
+
+
+/* =========================================================
+   COVER TEXT
+========================================================= */
+
+.cover-text {
+
+    position: absolute;
+
+    inset: 0;
 
     display: flex;
+
+    flex-direction: column;
+
     align-items: center;
     justify-content: center;
 
-    font-size: clamp(13px, 2vw, 18px);
+    text-align: center;
+
+    color: #a95e72;
+
+    padding: 25px;
 }
 
-.page-content span {
-    opacity: .45;
+.cover-text h1 {
+
+    font-size:
+        clamp(18px, 3.1vw, 30px);
+
+    line-height: 1.18;
+
+    font-weight: normal;
+
+    font-style: italic;
+
+    text-shadow:
+        0 1px rgba(255,255,255,.5);
+}
+
+.cover-heart {
+
+    margin-top: 13px;
+
+    font-size: 23px;
+}
+
+.click-text {
+
+    margin-top: 13px;
+
+    font-size:
+        clamp(9px, 1.4vw, 13px);
+
+    letter-spacing: .8px;
+
+    opacity: .72;
+}
+
+
+/* =========================================================
+   RIBBON
+========================================================= */
+
+.ribbon {
+
+    position: absolute;
+
+    bottom: 0;
+
+    left: 50%;
+
+    width: 12px;
+
+    height: 22%;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            #d78ba0,
+            #efb1c0,
+            #d78ba0
+        );
+
+    opacity: .8;
+
+    z-index: -1;
+}
+
+
+/* =========================================================
+   OPENING ANIMATION
+========================================================= */
+
+/*
+   The entire book shifts left by approximately half
+   the book width.
+
+   This means the open spread ends up centered.
+*/
+
+.book.open {
+
+    transform:
+        translateX(
+            calc(-50% + 4px)
+        )
+        translateZ(0);
+}
+
+
+/*
+   THE COVER ACTUALLY OPENS.
+
+   Instead of disappearing sideways,
+   it rotates around its LEFT SPINE.
+*/
+
+.book.open .cover {
+
+    transform:
+        rotateY(-175deg);
+
+    box-shadow:
+
+        -4px 10px 20px
+        rgba(70,35,45,.12);
+}
+
+
+/*
+   Pages are already physically there.
+   They don't simply fade in.
+
+   They become interactive after opening.
+*/
+
+.book.open .open-book {
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
+
+.page-content {
+
+    position: absolute;
+
+    inset: 0;
+
+    padding: 9%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: #80656b;
+
+    font-size:
+        clamp(11px, 1.7vw, 16px);
+}
+
+.page-content .placeholder {
+
+    opacity: .35;
+
     font-style: italic;
 }
 
-/* =========================
-   LANDSCAPE ONLY
-========================= */
+
+/* =========================================================
+   PAGE DECORATION
+========================================================= */
+
+.page-decoration {
+
+    position: absolute;
+
+    inset: 8%;
+
+    border:
+        1px solid
+        rgba(180,145,120,.22);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   LITTLE GOLD SPARKLES
+========================================================= */
+
+.sparkle {
+
+    position: absolute;
+
+    color: rgba(255,255,255,.8);
+
+    font-size: 14px;
+
+    animation:
+        sparkle 3s ease-in-out infinite;
+}
+
+.sparkle.s1 {
+    left: 20%;
+    top: 25%;
+}
+
+.sparkle.s2 {
+    right: 18%;
+    top: 65%;
+    animation-delay: -1s;
+}
+
+.sparkle.s3 {
+    left: 78%;
+    top: 30%;
+    animation-delay: -2s;
+}
+
+@keyframes sparkle {
+
+    0%,100% {
+        opacity: .15;
+        transform: scale(.7);
+    }
+
+    50% {
+        opacity: .8;
+        transform: scale(1.2);
+    }
+}
+
+
+/* =========================================================
+   PORTRAIT WARNING
+========================================================= */
 
 @media (orientation: portrait) {
+
     body::before {
-        content: "Please turn your phone sideways ♡";
+
+        content:
+            "Please turn your phone sideways ♡";
+
         position: fixed;
+
         inset: 0;
-        z-index: 9999;
+
+        z-index: 99999;
 
         display: flex;
+
         align-items: center;
         justify-content: center;
 
-        background: linear-gradient(135deg, #f4b2c5, #f8d4df);
-
-        color: #9c6071;
-        font-family: Georgia, serif;
-        font-size: 22px;
         text-align: center;
+
         padding: 30px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f4b1c3,
+                #f8d4df
+            );
+
+        color: #9d6072;
+
+        font-family:
+            Georgia,
+            serif;
+
+        font-size: 20px;
     }
 }
+
 </style>
 </head>
 
+
 <body>
 
-<!-- Background -->
-<div class="wave"></div>
-<div class="wave"></div>
-<div class="wave"></div>
 
-<div class="petal p1"></div>
-<div class="petal p2"></div>
-<div class="petal p3"></div>
-<div class="petal p4"></div>
+<!-- =====================================================
+     BACKGROUND
+===================================================== -->
 
+<div class="background">
+
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+    <div class="wave"></div>
+
+    <div class="shimmer"></div>
+
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+    <div class="petal"></div>
+
+    <div class="sparkle s1">✦</div>
+    <div class="sparkle s2">✧</div>
+    <div class="sparkle s3">✦</div>
+
+</div>
+
+
+<!-- =====================================================
+     BOOK
+===================================================== -->
 
 <div class="scene">
 
     <div class="book" id="book">
 
-        <!-- ================= COVER ================= -->
+        <div class="book-shadow"></div>
+
+
+        <!-- =============================================
+             PAGE BLOCK UNDER THE COVER
+        ============================================== -->
+
+        <div class="page-block">
+            <div class="page-edge"></div>
+        </div>
+
+
+        <!-- =============================================
+             OPEN BOOK
+        ============================================== -->
+
+        <div class="open-book">
+
+            <!-- LEFT PAGE -->
+
+            <div class="open-page left">
+
+                <div class="page-decoration"></div>
+
+                <div class="page-content">
+
+                    <span class="placeholder">
+                        <!-- Your message will go here -->
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT PAGE -->
+
+            <div class="open-page right">
+
+                <div class="page-decoration"></div>
+
+                <div class="page-content">
+
+                    <span class="placeholder">
+                        <!-- Your message will go here -->
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =============================================
+             COVER
+        ============================================== -->
 
         <div class="cover">
 
-            <div class="spine"></div>
+            <div class="cover-inner"></div>
 
-            <div class="decor"></div>
+            <div class="ribbon"></div>
 
-            <div class="corner c1">❧</div>
-            <div class="corner c2">❧</div>
-            <div class="corner c3">❧</div>
-            <div class="corner c4">❧</div>
+            <div class="corner tl">❧</div>
+            <div class="corner tr">❧</div>
+            <div class="corner bl">❧</div>
+            <div class="corner br">❧</div>
 
             <div class="flower f1">✿</div>
             <div class="flower f2">✿</div>
@@ -470,7 +1079,8 @@ the TWO pages are centered.
 
             <div class="bow">୨୧</div>
 
-            <div class="cover-content">
+
+            <div class="cover-text">
 
                 <h1>
                     Sorry for<br>
@@ -478,35 +1088,14 @@ the TWO pages are centered.
                     Zanieke
                 </h1>
 
-                <div class="heart">♡</div>
+                <div class="cover-heart">
+                    ♡
+                </div>
 
-                <div class="open-text">
+                <div class="click-text">
                     (click to open)
                 </div>
 
-            </div>
-
-        </div>
-
-
-        <!-- ================= OPEN PAGES ================= -->
-
-        <div class="pages">
-
-            <div class="page left">
-                <div class="page-content">
-                    <span>
-                        <!-- We can put whatever you want here later -->
-                    </span>
-                </div>
-            </div>
-
-            <div class="page right">
-                <div class="page-content">
-                    <span>
-                        <!-- We can put whatever you want here later -->
-                    </span>
-                </div>
             </div>
 
         </div>
@@ -521,12 +1110,17 @@ the TWO pages are centered.
 const book = document.getElementById("book");
 
 book.addEventListener("click", () => {
+
     if (!book.classList.contains("open")) {
+
         book.classList.add("open");
+
     }
+
 });
 
 </script>
 
 </body>
 </html>
+```

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sorry for Everything Zanieke</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            background-color: #fdf2f8;
+        }
+
+        .font-serif-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .font-handwriting {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        .font-script {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        /* 3D Scene setup */
+        .scene {
+            perspective: 1800px;
+            perspective-origin: 50% 50%;
+        }
+
+        /* Book Structure */
+        .book-wrapper {
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+            transform-style: preserve-3d;
+        }
+
+        /* Centering shift: 
+           Closed state: Front cover center alignment (shifted left by half cover width)
+           Open state: Book spread center alignment (shifted to center)
+        */
+        .book-wrapper.closed {
+            /* Cover width is ~300px, so shifting left by ~150px aligns front cover center */
+            transform: translateX(-140px) rotateX(8deg) rotateY(0deg);
+        }
+
+        .book-wrapper.opened {
+            transform: translateX(0px) rotateX(0deg) rotateY(0deg);
+        }
+
+        .book {
+            width: 300px;
+            height: 420px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        @media (max-height: 500px) {
+            .book {
+                width: 240px;
+                height: 330px;
+            }
+            .book-wrapper.closed {
+                transform: translateX(-110px) rotateX(8deg) rotateY(0deg);
+            }
+        }
+
+        /* Page Base */
+        .page {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            right: 0;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 1.2s ease;
+            border-radius: 4px 16px 16px 4px;
+        }
+
+        /* Cover Specifics */
+        .cover-front {
+            z-index: 50;
+            cursor: pointer;
+            transform-origin: left center;
+        }
+
+        .book-wrapper.opened .cover-front {
+            transform: rotateY(-180deg);
+            z-index: 1;
+        }
+
+        .cover-front-face, .cover-back-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 4px 16px 16px 4px;
+        }
+
+        .cover-back-face {
+            transform: rotateY(180deg);
+            background: linear-gradient(135deg, #fff5f7 0%, #fce7f3 100%);
+            border-right: 1px solid #fbcfe8;
+        }
+
+        /* Page stack effects */
+        .page-stack-left {
+            position: absolute;
+            left: -298px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: #fffdfa;
+            border-radius: 16px 4px 4px 16px;
+            box-shadow: -10px 10px 25px rgba(0, 0, 0, 0.15), inset -8px 0 12px rgba(0,0,0,0.04);
+            transform-style: preserve-3d;
+            border: 1px solid #f3e8ff;
+        }
+
+        @media (max-height: 500px) {
+            .page-stack-left {
+                left: -238px;
+                width: 240px;
+            }
+        }
+
+        .page-body {
+            background: #fffdfb;
+            background-image: radial-gradient(#fbcfe8 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1), inset 12px 0 15px rgba(0,0,0,0.05);
+            border: 1px solid #fae8ff;
+        }
+
+        /* Ribbon Bookmark */
+        .ribbon {
+            position: absolute;
+            top: -10px;
+            right: 40px;
+            width: 26px;
+            height: 120%;
+            background: linear-gradient(135deg, #f43f5e, #fb7185);
+            box-shadow: 2px 4px 10px rgba(244, 63, 94, 0.3);
+            z-index: 10;
+            border-radius: 0 0 4px 4px;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 88%, 0 100%);
+            pointer-events: none;
+        }
+
+        /* Spine 3D details */
+        .book-spine {
+            position: absolute;
+            left: -16px;
+            top: 0;
+            width: 20px;
+            height: 100%;
+            background: linear-gradient(to right, #9f1239, #be123c, #fb7185);
+            transform: rotateY(-90deg) translateZ(10px);
+            border-radius: 4px 0 0 4px;
+        }
+
+        /* Page Flips */
+        .page-flip {
+            transform-origin: left center;
+            transition: transform 0.9s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        .page-flip.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Shimmer & Glows */
+        .gold-emboss {
+            background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 1px 1px rgba(0,0,0,0.15));
+        }
+
+        .gold-border {
+            border: 2px solid;
+            border-image: linear-gradient(135deg, #bf953f, #fcf6ba, #aa771c) 1;
+        }
+
+        /* Floating particles canvas */
+        #bgCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Orientation overlay */
+        #orientationOverlay {
+            display: none;
+            z-index: 9999;
+        }
+
+        @media orientation: portrait {
+            #orientationOverlay {
+                display: flex;
+            }
+        }
+
+        /* Pulsing Glow Effect */
+        @keyframes gentlePulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+
+        .pulse-glow {
+            animation: gentlePulse 3s infinite ease-in-out;
+        }
+
+        /* Page turn shadow gradient */
+        .page-shadow-right {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+        }
+        
+        .page-shadow-left {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to left, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="w-screen h-screen flex items-center justify-center overflow-hidden bg-pink-50 select-none">
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div id="orientationOverlay" class="fixed inset-0 bg-pink-900/90 backdrop-blur-md text-white flex flex-col items-center justify-center p-6 text-center">
+        <div class="bg-pink-800/80 p-6 rounded-3xl border border-pink-400/30 max-w-sm flex flex-col items-center shadow-2xl animate-bounce">
+            <i class="fa-solid fa-mobile-screen-button text-5xl mb-4 text-pink-200 rotate-90"></i>
+            <h2 class="text-2xl font-bold mb-2 font-serif-title">Please Rotate Your Device</h2>
+            <p class="text-pink-100 text-sm">This romantic experience is made specifically for landscape mode 📱🔄</p>
+        </div>
+    </div>
+
+    <main class="scene relative z-10 w-full h-full flex items-center justify-center">
+
+        <!-- Controls / Top Bar -->
+        <div class="absolute top-4 right-4 z-50 flex items-center space-x-3">
+            <button id="musicToggle" class="bg-white/70 hover:bg-white text-pink-600 p-2.5 rounded-full shadow-lg backdrop-blur-md transition-all duration-300 border border-pink-200/50 flex items-center justify-center w-10 h-10">
+                <i class="fa-solid fa-music text-sm"></i>
+            </button>
+            <button id="resetBookBtn" class="bg-white/70 hover:bg-white text-pink-600 px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md transition-all duration-300 border border-pink-200/50 text-xs font-semibold flex items-center space-x-1.5">
+                <i class="fa-solid fa-rotate-left text-xs"></i>
+                <span>Close Book</span>
+            </button>
+        </div>
+
+        <!-- Interactive Book Wrapper -->
+        <div id="bookWrapper" class="book-wrapper closed">
+            <div id="book" class="book">
+
+                <!-- 3D Book Spine -->
+                <div class="book-spine"></div>
+
+                <!-- LEFT PAGE STACK (Becomes visible when book opens) -->
+                <div id="leftPageStack" class="page-stack-left hidden p-6 flex-col justify-between overflow-hidden">
+                    <div class="page-shadow-left"></div>
+                    <div class="text-center pt-3">
+                        <span class="text-xs uppercase tracking-widest text-pink-400 font-semibold">For Zanieke</span>
+                        <div class="h-0.5 w-12 bg-pink-200 mx-auto mt-1"></div>
+                    </div>
+                    
+                    <div class="my-auto text-center px-2">
+                        <i class="fa-solid fa-quote-left text-pink-300 text-2xl mb-2 block"></i>
+                        <p class="font-handwriting text-2xl text-pink-900 leading-relaxed">
+                            "I made this little space just for you, to show how genuinely sorry I am..."
+                        </p>
+                        <i class="fa-solid fa-heart text-pink-400/60 text-sm mt-3 animate-pulse"></i>
+                    </div>
+
+                    <div class="text-center pb-2">
+                        <span class="text-[10px] text-pink-300 font-serif-title">Page 1</span>
+                    </div>
+                </div>
+
+                <!-- INNER PAGE 1 (Right side when opened) -->
+                <div id="page1" class="page page-body p-6 flex flex-col justify-between z-10">
+                    <div class="page-shadow-right"></div>
+                    <div class="text-right pt-2">
+                        <span class="text-[10px] text-pink-300 font-serif-title">Page 2</span>
+                    </div>
+
+                    <div class="my-auto px-1 space-y-3 text-center">
+                        <h3 class="font-script text-3xl text-pink-700">Dear Zanieke,</h3>
+                        <p class="text-xs text-pink-800/80 leading-relaxed font-light">
+                            From the bottom of my heart, I am truly sorry. You mean the world to me, and I wanted to create something special to bring a soft smile back to your face.
+                        </p>
+                        <div class="p-3 bg-pink-50/80 rounded-xl border border-pink-200/60 text-[11px] text-pink-600 italic shadow-inner">
+                            ✨ "Every page here was crafted with care just for you."
+                        </div>
+                    </div>
+
+                    <!-- Interactive Next Page Button inside Open Book -->
+                    <div class="flex justify-between items-center pt-2 border-t border-pink-100">
+                        <span class="text-[10px] text-pink-400 italic">Tap right to flip</span>
+                        <button id="nextPageBtn" class="bg-gradient-to-r from-pink-500 to-rose-400 text-white text-xs px-3 py-1.5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center space-x-1 group">
+                            <span>Turn Page</span>
+                            <i class="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- INNER PAGE 2 (Appears on flipping inner page) -->
+                <div id="page2" class="page page-body p-6 flex flex-col justify-between page-flip z-20">
+                    <div class="page-shadow-right"></div>
+                    <div class="text-right pt-2">
+                        <span class="text-[10px] text-pink-300 font-serif-title">Page 3</span>
+                    </div>
+
+                    <div class="my-auto text-center space-y-3">
+                        <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto text-pink-500 text-xl shadow-inner">
+                            <i class="fa-solid fa-envelope-open-text"></i>
+                        </div>
+                        <h4 class="font-serif-title text-base font-semibold text-pink-900">Next Chapter Coming Soon...</h4>
+                        <p class="text-xs text-pink-700/80 leading-relaxed">
+                            I am ready whenever you want to add more personal messages, photos, memories, or notes to this book!
+                        </p>
+                        <button id="sendLoveHeartBtn" class="mt-2 bg-pink-100 hover:bg-pink-200 text-pink-600 text-xs px-3 py-1.5 rounded-xl border border-pink-300/50 transition-all active:scale-95 flex items-center space-x-1.5 mx-auto">
+                            <i class="fa-solid fa-sparkles text-pink-400"></i>
+                            <span>Tap for Magic</span>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-2 border-t border-pink-100">
+                        <button id="prevPageBtn" class="text-pink-500 text-xs px-2 py-1 rounded-md hover:bg-pink-50 flex items-center space-x-1">
+                            <i class="fa-solid fa-arrow-left text-[10px]"></i>
+                            <span>Back</span>
+                        </button>
+                        <span class="text-[10px] text-pink-300 font-serif-title">To Be Continued...</span>
+                    </div>
+                </div>
+
+                <!-- COVER FRONT (Interactive Trigger) -->
+                <div id="coverFront" class="page cover-front">
+                    <div class="cover-front-face bg-gradient-to-br from-rose-400 via-pink-500 to-rose-600 p-6 flex flex-col justify-between shadow-2xl rounded-r-2xl border-l-4 border-rose-700 relative overflow-hidden">
+                        
+                        <!-- Ribbon Bookmark Decorative -->
+                        <div class="ribbon"></div>
+
+                        <!-- Decorative Floral Pattern Overlay -->
+                        <div class="absolute inset-0 opacity-15 pointer-events-none" style="background-image: radial-gradient(circle at 2px 2px, white 1px, transparent 0); background-size: 16px 16px;"></div>
+                        
+                        <!-- Golden Border Frame -->
+                        <div class="absolute inset-3 border-2 border-pink-200/40 rounded-xl pointer-events-none flex flex-col justify-between p-2">
+                            <div class="flex justify-between text-pink-200/60 text-xs">
+                                <span>✦</span><span>✦</span>
+                            </div>
+                            <div class="flex justify-between text-pink-200/60 text-xs">
+                                <span>✦</span><span>✦</span>
+                            </div>
+                        </div>
+
+                        <!-- Front Cover Header -->
+                        <div class="text-center pt-4 z-10">
+                            <span class="text-[11px] uppercase tracking-widest text-pink-100 font-medium bg-rose-700/30 px-3 py-1 rounded-full border border-pink-200/30 backdrop-blur-sm">
+                                A Special Note
+                            </span>
+                        </div>
+
+                        <!-- Main Title -->
+                        <div class="text-center my-auto z-10 px-2">
+                            <h1 class="font-handwriting text-4xl sm:text-5xl text-white drop-shadow-md leading-tight mb-2">
+                                Sorry for everything
+                            </h1>
+                            <h2 class="font-script text-3xl text-pink-100 drop-shadow gold-emboss font-bold">
+                                Zanieke
+                            </h2>
+                            <div class="w-16 h-0.5 bg-gradient-to-r from-transparent via-pink-200 to-transparent mx-auto my-3"></div>
+                            <p class="text-xs text-pink-100/90 italic font-light">
+                                Written from the heart
+                            </p>
+                        </div>
+
+                        <!-- Interactive Subtext Prompt -->
+                        <div class="text-center pb-2 z-10">
+                            <div class="inline-flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white text-xs px-4 py-2 rounded-full backdrop-blur-md border border-white/40 transition-all duration-300 pulse-glow shadow-lg cursor-pointer">
+                                <i class="fa-solid fa-hand-pointer text-xs animate-bounce"></i>
+                                <span class="font-medium tracking-wide">(click to open)</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Inside of Front Cover -->
+                    <div class="cover-back-face p-6 flex flex-col justify-center items-center text-center">
+                        <div class="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center text-pink-400 mb-3 shadow-inner">
+                            <i class="fa-solid fa-heart text-2xl"></i>
+                        </div>
+                        <span class="font-script text-xl text-pink-800">For Zanieke</span>
+                        <p class="text-[11px] text-pink-500 mt-1">Softly flipping open memory by memory...</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let step = 0;
+        const particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Glowing particles initialization
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 4 + 1.5;
+                this.speedY = Math.random() * -0.6 - 0.2;
+                this.speedX = Math.random() * 0.4 - 0.2;
+                this.opacity = Math.random() * 0.6 + 0.2;
+                this.pulseSpeed = Math.random() * 0.02 + 0.005;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.opacity += Math.sin(step * this.pulseSpeed) * 0.01;
+
+                if (this.y < -10 || this.x < -10 || this.x > width + 10) {
+                    this.reset();
+                    this.y = height + 10;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, Math.min(1, this.opacity));
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#f472b6';
+                ctx.shadowColor = '#fb7185';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 45; i++) {
+            particles.push(new Particle());
+        }
+
+        // Draw Soft Animated Pink Waves Background
+        function drawWaves() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Background Gradient
+            const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+            bgGradient.addColorStop(0, '#fdf2f8');
+            bgGradient.addColorStop(0.5, '#fce7f3');
+            bgGradient.addColorStop(1, '#fbcfe8');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw multiple wave layers
+            drawWave('#f472b6', 0.15, 0.005, 30, height * 0.75, step * 0.015);
+            drawWave('#fb7185', 0.2, 0.008, 45, height * 0.82, step * 0.02 + 1);
+            drawWave('#f43f5e', 0.1, 0.004, 25, height * 0.88, step * 0.01 + 2);
+
+            // Render glowing particles
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            step++;
+            requestAnimationFrame(drawWaves);
+        }
+
+        function drawWave(color, alpha, frequency, amplitude, translateY, time) {
+            ctx.save();
+            ctx.fillStyle = color;
+            ctx.globalAlpha = alpha;
+            ctx.beginPath();
+            ctx.moveTo(0, height);
+
+            for (let x = 0; x <= width; x += 10) {
+                const y = Math.sin(x * frequency + time) * amplitude + translateY;
+                ctx.lineTo(x, y);
+            }
+
+            ctx.lineTo(width, height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+        }
+
+        drawWaves();
+
+        const bookWrapper = document.getElementById('bookWrapper');
+        const coverFront = document.getElementById('coverFront');
+        const leftPageStack = document.getElementById('leftPageStack');
+        const page2 = document.getElementById('page2');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const resetBookBtn = document.getElementById('resetBookBtn');
+        const sendLoveHeartBtn = document.getElementById('sendLoveHeartBtn');
+        const musicToggle = document.getElementById('musicToggle');
+
+        let isBookOpen = false;
+        let isInnerPageFlipped = false;
+
+        // Open Book Event
+        coverFront.addEventListener('click', () => {
+            if (!isBookOpen) {
+                openBook();
+            }
+        });
+
+        function openBook() {
+            isBookOpen = true;
+            // Slide/Translate book to perfect center when opened
+            bookWrapper.classList.remove('closed');
+            bookWrapper.classList.add('opened');
+
+            // Play soft ambient page sound effect
+            playPageTurnSound();
+
+            // Reveal left page stack smoothly after delay
+            setTimeout(() => {
+                leftPageStack.classList.remove('hidden');
+                leftPageStack.classList.add('flex');
+            }, 300);
+        }
+
+        function closeBook() {
+            isBookOpen = false;
+            isInnerPageFlipped = false;
+
+            page2.classList.remove('flipped');
+            leftPageStack.classList.add('hidden');
+            leftPageStack.classList.remove('flex');
+
+            // Slide book back to centered front cover position
+            bookWrapper.classList.remove('opened');
+            bookWrapper.classList.add('closed');
+
+            playPageTurnSound();
+        }
+
+        nextPageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            page2.classList.add('flipped');
+            isInnerPageFlipped = true;
+            playPageTurnSound();
+        });
+
+        prevPageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            page2.classList.remove('flipped');
+            isInnerPageFlipped = false;
+            playPageTurnSound();
+        });
+
+        resetBookBtn.addEventListener('click', () => {
+            if (isBookOpen) {
+                closeBook();
+            }
+        });
+
+        // Interactive Sparkle/Heart Trigger inside Open Page
+        sendLoveHeartBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            createHeartBurst(e.clientX, e.clientY);
+        });
+
+        function createHeartBurst(x, y) {
+            for (let i = 0; i < 12; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'fixed pointer-events-none text-pink-500 text-lg z-50 animate-ping';
+                heart.innerHTML = '<i class="fa-solid fa-heart"></i>';
+                
+                const offsetX = (Math.random() - 0.5) * 120;
+                const offsetY = (Math.random() - 0.5) * 120;
+                
+                heart.style.left = `${x + offsetX}px`;
+                heart.style.top = `${y + offsetY}px`;
+                heart.style.transition = 'all 1s ease-out';
+                
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.remove();
+                }, 1000);
+            }
+        }
+
+        let audioCtx;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playPageTurnSound() {
+            try {
+                initAudio();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                // White noise buffer for paper rustle sound
+                const bufferSize = audioCtx.sampleRate * 0.15;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 1000;
+                filter.Q.value = 1.2;
+
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                noise.start();
+            } catch (e) {
+                // Audio fallback silence
+            }
+        }
+
+        // Subtle Ambient Chime Music Toggle
+        let isMusicPlaying = false;
+        let ambientOscillator;
+
+        musicToggle.addEventListener('click', () => {
+            initAudio();
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (!isMusicPlaying) {
+                playSoftChimes();
+                musicToggle.classList.add('bg-pink-500', 'text-white');
+                musicToggle.classList.remove('bg-white/70', 'text-pink-600');
+                isMusicPlaying = true;
+            } else {
+                if (ambientOscillator) ambientOscillator.stop();
+                musicToggle.classList.remove('bg-pink-500', 'text-white');
+                musicToggle.classList.add('bg-white/70', 'text-pink-600');
+                isMusicPlaying = false;
+            }
+        });
+
+        function playSoftChimes() {
+            if (!isMusicPlaying && ambientOscillator) return;
+
+            const notes = [261.63, 329.63, 392.00, 523.25, 659.25]; // C, E, G, C5, E5
+            const note = notes[Math.floor(Math.random() * notes.length)];
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.05, audioCtx.currentTime + 0.5);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 2.6);
+
+            if (isMusicPlaying) {
+                setTimeout(playSoftChimes, 1800 + Math.random() * 1200);
+            }
+        }
+    </script>
+</body>
+</html>
